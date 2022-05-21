@@ -24,13 +24,13 @@ namespace ariel{
         Node *first;
         OrgChart();
         ~OrgChart();
-        OrgChart& add_root(string position);
-        OrgChart& add_sub(string higherPosName, string lowerPosName);
+        OrgChart& add_root(const string &position);
+        OrgChart& add_sub(const string &higherPosName, const string &lowerPosName);
         friend ostream& operator<<(ostream& output, const OrgChart &org);
-        Node* getNode(string name);
+        Node* getNode(const string &name) const;
     class Iterator{
       private:
-      int curr_index; //get node at this index
+      unsigned long curr_index; //get node at this index
       vector<Node*> tree_list; //list of traversal
       public:
 
@@ -43,7 +43,7 @@ namespace ariel{
             Node * p = q.front();
             q.pop();
             this->tree_list.push_back(p);
-            for (int i = 0; i < p->subs.size(); i++){
+            for (unsigned long i = 0; i < p->subs.size(); i++){
                 q.push(p->subs.at(i));
             }
             n--;
@@ -59,7 +59,7 @@ namespace ariel{
             q.pop();
             s.push(n); //insert the next one from last
             for(int i = n->subs.size() - 1; i >= 0; i--){ //iterate over children
-                q.push(n->subs.at(i));
+                q.push(n->subs.at((unsigned long)i));
             }
         }
         while(!s.empty()){
@@ -77,7 +77,8 @@ namespace ariel{
         s.pop(); 
         this->tree_list.push_back(temp); //push it to final result
         for (int i = temp->subs.size() - 1; i >= 0; i--) { //iterate over children
-            s.push(temp->subs.at(i));
+        // cout << "name is: " << temp->subs.at(i)->data << "\n" << "i is: " << i << endl;
+            s.push(temp->subs.at((unsigned long)i));
         }
         }
 }
@@ -120,14 +121,14 @@ namespace ariel{
     //     }
 
     };
-    Iterator begin();
-    Iterator end();
-    Iterator begin_level_order();
-    Iterator end_level_order();
-    Iterator begin_reverse_order();
-    Iterator reverse_order();
-    Iterator begin_preorder();
-    Iterator end_preorder();
+    Iterator begin() const;
+    static Iterator end();
+    Iterator begin_level_order() const;
+    static Iterator end_level_order();
+    Iterator begin_reverse_order() const;
+    static Iterator reverse_order();
+    Iterator begin_preorder() const;
+    static Iterator end_preorder();
  };
    
 }
