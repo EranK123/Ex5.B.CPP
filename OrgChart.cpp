@@ -17,49 +17,68 @@ OrgChart::~OrgChart(){
     delete(this->first);
 }
 
+//uses level order to find the node with the matching name
+OrgChart::Node* OrgChart::getNode(string name){
+    if(this->first == nullptr){
+        throw std::invalid_argument("Need to add root first");
+    }
+    queue<Node *> q; 
+    q.push(this->first); 
+    while (!q.empty()){
+        int n = q.size();
+        while (n > 0){
+            Node * p = q.front();
+            q.pop();
+            if(p->data == name){
+                return p;
+            }
+            for (int i = 0; i < p->subs.size(); i++){
+                q.push(p->subs.at(i));
+            }
+            n--;
+        }
+    }
+    return nullptr;
+}
+
 OrgChart& OrgChart::add_root(string position){
-    this->first = newNode(position);
+    if(position == "\n" || position == "\t" || this->first != nullptr){
+        throw std::invalid_argument("Cant accept these strings");
+    }
+    this->first = newNode(position); //add new node as the root
     return *this;
 }
 
 OrgChart& OrgChart::add_sub(string higherPosName, string lowerPosName){
+    if(higherPosName == "\n" || higherPosName == "\t" || lowerPosName == "\n" || lowerPosName == "\t"){ //bad strings
+        throw std::invalid_argument("Cant accept these strings");
+    }
+  
     Node *new_node = newNode(lowerPosName); //create new node
-    if(higherPosName == this->first->data){ //if its the root add it
-    this->first->subs.push_back(new_node);   
+    Node* higher = getNode(higherPosName); //get the node with the higher position name
+    if(higher == nullptr){ //if its null throw 
+        throw std::invalid_argument("Cant sub to Null");
     }
-    Node *temp = this->first;
-    for(size_t i = 0; i < temp->subs.size(); i++){
-        if(temp->subs.at(i)->data == higherPosName){
-            temp->subs.at(i)->subs.push_back(new_node);
-            break;
-        }  
-    }
+    higher->subs.push_back(new_node); //push lower node to higher node
     return *this;
     }
-
+//uses level order to output all nodes
 ostream& ariel::operator<<(ostream& output, const OrgChart &org){
-	queue<OrgChart::Node *> q; // Create a queue
-	q.push(org.first); // Enqueue root
-	while (!q.empty())
-	{
+	queue<OrgChart::Node *> q;  //init q
+	q.push(org.first); 
+	while (!q.empty()){
 		int n = q.size();
 
-		// If this node has children
-		while (n > 0)
-		{
-			// Dequeue an item from queue and print it
+		while (n > 0){
 			OrgChart::Node * p = q.front();
 			q.pop();
 			output << p->data << " ";
-
-			// Enqueue all children of the dequeued item
-			for (int i=0; i<p->subs.size(); i++){
+			for (int i = 0; i < p->subs.size(); i++){
 				q.push(p->subs.at(i));
             }
 			n--;
 		}
-
-		output << endl; // Print new line between two levels
+		output << endl; 
 	}
     return output;
 }
@@ -77,10 +96,10 @@ OrgChart::Iterator OrgChart::end_level_order(){
     return Iterator(nullptr, 0);
 }
 OrgChart::Iterator OrgChart::begin_reverse_order(){
-    return Iterator(nullptr , 1);
+    return Iterator(this->first , 1);
 }
 OrgChart::Iterator OrgChart::reverse_order(){
-    return Iterator(this->first, 1);
+    return Iterator(nullptr, 1);
 }
 OrgChart::Iterator OrgChart::begin_preorder(){
     return Iterator(this->first, 2);
@@ -91,22 +110,17 @@ OrgChart::Iterator OrgChart::end_preorder(){
 
 int main(){
     OrgChart org;
-    org.add_root("CEO")
-      .add_sub("CEO", "CTO")        // Now the CTO is subordinate to the CEO
-      .add_sub("CEO", "CFO")        // Now the CFO is subordinate to the CEO         // Now the COO is subordinate to the CEO
+   org.add_root("CEO")
+      .add_sub("CEO", "CTO")         // Now the CTO is subordinate to the CEO
+      .add_sub("CEO", "CFO")         // Now the CFO is subordinate to the CEO
+      .add_sub("CEO", "COO")         // Now the COO is subordinate to the CEO
       .add_sub("CTO", "VP_SW") // Now the VP Software is subordinate to the CTO
-      .add_sub("CEO", "COO")
-        .add_sub("COO", "VP_BI");
+      .add_sub("COO", "VP_BI")
+      .add_sub("VP_SW", "Rookie"); 
     for (auto it = org.begin_preorder(); it != org.end_preorder(); ++it)
   {
     cout << (*it) << " " ;
-  }
-// for (auto element : org)
-//   { // this should work like level order
-//     cout << element << " " ;
-//   } // 
-//    / prints: CEO CTO CFO COO VP_SW VP_BI
-   
-// cout << org;
 
+  }
 }
+ 
