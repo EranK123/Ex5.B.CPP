@@ -28,6 +28,7 @@ namespace ariel{
         OrgChart& add_sub(const string &higherPosName, const string &lowerPosName);
         friend ostream& operator<<(ostream& output, const OrgChart &org);
         Node* getNode(const string &name) const;
+        void deleteOrg(Node* root);
     class Iterator{
       private:
       unsigned long curr_index; //get node at this index
@@ -122,13 +123,13 @@ namespace ariel{
 
     };
     Iterator begin() const;
-    static Iterator end();
+    Iterator end() const;
     Iterator begin_level_order() const;
-    static Iterator end_level_order();
+    Iterator end_level_order() const;
     Iterator begin_reverse_order() const;
-    static Iterator reverse_order();
+    Iterator reverse_order() const;
     Iterator begin_preorder() const;
-    static Iterator end_preorder();
+    Iterator end_preorder() const;
  };
    
 }
