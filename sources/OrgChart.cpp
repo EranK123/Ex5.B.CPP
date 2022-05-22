@@ -9,11 +9,11 @@ using namespace std;
 using namespace ariel;
 
 
-OrgChart::OrgChart(){
+OrgChart::OrgChart(){ //init empty tree
     this->first = nullptr;
 }
 
-OrgChart::~OrgChart(){
+OrgChart::~OrgChart(){ //delete tree to avoid memory leaks
     deleteOrg(this->first);
 }
 
@@ -45,8 +45,15 @@ OrgChart& OrgChart::add_root(const string &position){
     if(position == "\n" || position == "\t"){
         throw std::invalid_argument("Cant accept these strings");
     }
-    this->first = newNode(position); //add new node as the root
-    return *this;
+    if(this->first != nullptr){ //in case we add root in the middle of adding subs we replace the root and take all its children
+       Node *root = newNode(position);
+       root->subs = this->first->subs;
+       this->first = root;
+    }else{ // if not we just add it
+        this->first = newNode(position);
+    }
+    
+    return *this; //add new node as the root
 }
 
 OrgChart& OrgChart::add_sub(const string &higherPosName, const string &lowerPosName){
@@ -133,27 +140,70 @@ OrgChart::Iterator OrgChart::end_preorder() const{
 }
 
 void OrgChart::deleteOrg(Node *root){
-//    queue<Node *> q; //init q
-//         stack<Node *> s; // init stack
-//         q.push(root); 
-//         while(!q.empty()){
-//             Node *n = q.front(); //get the first in order
+// vector<Node*> toDeleteList; 
+//  queue<Node *> q; 
+//     q.push(root); 
+//     while (!q.empty()){
+//         int n = q.size();
+//         while (n > 0){
+//             Node * p = q.front();
 //             q.pop();
-//             s.push(n); //insert the next one from last
-//             for(int i = n->subs.size() - 1; i >= 0; i--){ //iterate over children
-//                 q.push(n->subs.at((unsigned long)i));
+//             toDeleteList.push_back(p);
+//             for (int i = 0; i < p->subs.size(); i++){
+//                 q.push(p->subs.at((unsigned long)i));
 //             }
+//             n--;
 //         }
-//         while(!s.empty()){
-//             Node *t = s.top(); 
-//             s.pop();
-//             delete(t);
-//         }
-//         delete(root);
-delete(this->first);
+//     }
+//      for (int i = 0; i < toDeleteList.size(); i++){
+//             delete(toDeleteList.at((unsigned long)i));
+// }
+    delete(root);
 }
 
 // int main(){
-//   
+//     class Person {
+//     public:
+//         string name;
+//         int age;
+
+//         Person(string Name, int Age) : name(Name), age(Age) {}
+
+//         bool operator==(Person &p1) {
+//             return this->name == p1.name;
+//         }
+//     };
+//     //instantiate People
+//     Person Great_GrandFather("Great_GrandFather", 85);
+//     Person Grandfather("GrandFather", 65);
+//     Person Father("Father", 45);
+//     Person Uncle("Uncle", 43);
+//     Person Aunt("Aunt", 43);
+//     Person Son("Son", 20);
+//     Person Daughter("Daughter", 18);
+//     Person Cousin("Cousin", 15);
+
+//     OrgChart chart1;
+//             (chart1.add_root(Aunt.name));
+//             (chart1.add_root(Great_GrandFather.name));
+//             (chart1.add_sub(Great_GrandFather.name, Grandfather.name));
+//             (chart1.add_sub(Grandfather.name, Father.name));
+//             (chart1.add_sub(Grandfather.name, Uncle.name));
+//             (chart1.add_sub(Grandfather.name, Aunt.name));
+//             (chart1.add_sub(Father.name, Son.name));
+//             (chart1.add_sub(Father.name, Daughter.name));
+//             (chart1.add_sub(Uncle.name, Cousin.name));
+//              Person Cousin2("Cousin2", 14);
+//                  Person GreatUncle("GreatUncle", 62);
+//                (chart1.add_sub(Aunt.name, Cousin2.name));
+//                            (chart1.add_sub(Great_GrandFather.name, GreatUncle.name));
+//                  Person GreatGrandma("GreatGrandma", 84);
+//             (chart1.add_root(GreatGrandma.name));
+
+//                 vector<string> pre_order;
+//             for (auto it = chart1.begin_preorder(); it != chart1.end_preorder(); ++it) {
+//                 cout << *it << " ";
+//     }
+  
 // }
  

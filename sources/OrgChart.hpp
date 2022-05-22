@@ -44,8 +44,8 @@ namespace ariel{
             Node * p = q.front();
             q.pop();
             this->tree_list.push_back(p);
-            for (unsigned long i = 0; i < p->subs.size(); i++){
-                q.push(p->subs.at(i));
+            for (int i = 0; i < p->subs.size(); i++){
+                q.push(p->subs.at((unsigned long)i));
             }
             n--;
         }
@@ -78,7 +78,6 @@ namespace ariel{
         s.pop(); 
         this->tree_list.push_back(temp); //push it to final result
         for (int i = temp->subs.size() - 1; i >= 0; i--) { //iterate over children
-        // cout << "name is: " << temp->subs.at(i)->data << "\n" << "i is: " << i << endl;
             s.push(temp->subs.at((unsigned long)i));
         }
         }
