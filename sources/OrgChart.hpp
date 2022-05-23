@@ -14,12 +14,11 @@ namespace ariel{
          struct Node{
             string data;
             vector<Node *> subs;
-            
+            Node(string s) : data(s){};
             
         };
         Node *newNode(string data){
-        Node *temp = new Node;
-        temp->data = data;
+        Node *temp = new Node(data);
         return temp;
         }
         

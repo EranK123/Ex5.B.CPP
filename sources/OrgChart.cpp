@@ -103,12 +103,11 @@ OrgChart& OrgChart::operator=(OrgChart&& ot) noexcept{
 }
 
 OrgChart& OrgChart::operator=(const OrgChart& ot){
-    if(ot.first->data == this->first->data){
+    if(&ot == this){
         return *this;
     }
     deleteOrg(this->first);
-    this->first = new Node;
-    this->first->data = ot.first->data;
+    this->first = new Node(ot.first->data);
     return *this;
 }
 
