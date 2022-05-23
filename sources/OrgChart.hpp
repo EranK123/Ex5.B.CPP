@@ -14,21 +14,27 @@ namespace ariel{
          struct Node{
             string data;
             vector<Node *> subs;
-
+            
+            
         };
         Node *newNode(string data){
         Node *temp = new Node;
         temp->data = data;
         return temp;
         }
+        
         Node *first;
         OrgChart();
         ~OrgChart();
+        OrgChart(OrgChart &ot);
+        OrgChart(const OrgChart &ot);
         OrgChart& add_root(const string &position);
         OrgChart& add_sub(const string &higherPosName, const string &lowerPosName);
         friend ostream& operator<<(ostream& output, const OrgChart &org);
         Node* getNode(const string &name) const;
         void deleteOrg(Node* root);
+        OrgChart& operator=(OrgChart&& ot) noexcept;
+        OrgChart& operator=(const OrgChart& ot);
     class Iterator{
       private:
       unsigned long curr_index; //get node at this index
@@ -110,15 +116,16 @@ namespace ariel{
           return *this;
       }
       string operator*() const{
-          return this->tree_list[curr_index]->data;
+          return this->tree_list[curr_index]->data; //returns the string
       }
       string* operator->() const{
-          return &(this->tree_list[curr_index]->data);
+          return &(this->tree_list[curr_index]->data); //returns as a pointer
       }
 
     // bool operator==(const Iterator &it) const {
     //         return !(*this != it);
     //     }
+    
 
     };
     Iterator begin() const;

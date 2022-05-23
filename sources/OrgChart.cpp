@@ -16,7 +16,15 @@ OrgChart::OrgChart(){ //init empty tree
 OrgChart::~OrgChart(){ //delete tree to avoid memory leaks
     deleteOrg(this->first);
 }
-
+//shallow copy
+OrgChart::OrgChart(OrgChart &ot){
+    this->first = ot.first;
+    ot.first = nullptr;
+}
+//deep copy
+OrgChart::OrgChart(const OrgChart &ot){
+this->first = newNode(ot.first->data);
+}
 //uses level order to find the node with the matching name
 OrgChart::Node* OrgChart::getNode(const string &name) const{
     if(this->first == nullptr){
@@ -45,10 +53,8 @@ OrgChart& OrgChart::add_root(const string &position){
     if(position == "\n" || position == "\t"){
         throw std::invalid_argument("Cant accept these strings");
     }
-    if(this->first != nullptr){ //in case we add root in the middle of adding subs we replace the root and take all its children
-       Node *root = newNode(position);
-       root->subs = this->first->subs;
-       this->first = root;
+    if(this->first != nullptr){ 
+       this->first->data = position; //if a root already exists replace it's name
     }else{ // if not we just add it
         this->first = newNode(position);
     }
@@ -60,12 +66,12 @@ OrgChart& OrgChart::add_sub(const string &higherPosName, const string &lowerPosN
     if(higherPosName == "\n" || higherPosName == "\t" || lowerPosName == "\n" || lowerPosName == "\t"){ //bad strings
         throw std::invalid_argument("Cant accept these strings");
     }
-  
-    Node *new_node = newNode(lowerPosName); //create new node
+    
     Node* higher = getNode(higherPosName); //get the node with the higher position name
     if(higher == nullptr){ //if its null throw 
         throw std::invalid_argument("Cant sub to Null");
     }
+    Node *new_node = newNode(lowerPosName); //create new node
     higher->subs.push_back(new_node); //push lower node to higher node
     return *this;
     }
@@ -88,6 +94,22 @@ ostream& ariel::operator<<(ostream& output, const OrgChart &org){
 		output << endl; 
 	}
     return output;
+}
+
+OrgChart& OrgChart::operator=(OrgChart&& ot) noexcept{
+    this->first = ot.first;
+    ot.first = nullptr;
+    return *this;
+}
+
+OrgChart& OrgChart::operator=(const OrgChart& ot){
+    if(ot.first->data == this->first->data){
+        return *this;
+    }
+    deleteOrg(this->first);
+    this->first = new Node;
+    this->first->data = ot.first->data;
+    return *this;
 }
 
 OrgChart::Iterator OrgChart::begin() const{
@@ -139,25 +161,13 @@ OrgChart::Iterator OrgChart::end_preorder() const{
     return Iterator(nullptr, 2);
 }
 
-void OrgChart::deleteOrg(Node *root){
-// vector<Node*> toDeleteList; 
-//  queue<Node *> q; 
-//     q.push(root); 
-//     while (!q.empty()){
-//         int n = q.size();
-//         while (n > 0){
-//             Node * p = q.front();
-//             q.pop();
-//             toDeleteList.push_back(p);
-//             for (int i = 0; i < p->subs.size(); i++){
-//                 q.push(p->subs.at((unsigned long)i));
-//             }
-//             n--;
-//         }
-//     }
-//      for (int i = 0; i < toDeleteList.size(); i++){
-//             delete(toDeleteList.at((unsigned long)i));
-// }
+void OrgChart::deleteOrg(Node *root){ // delete the tree
+    if(root == nullptr){
+        return;
+    }
+    for(size_t i = 0; i < root->subs.size(); i++){ //iterate over children and recursively delete each one
+        deleteOrg(root->subs.at(i));
+    }
     delete(root);
 }
 
