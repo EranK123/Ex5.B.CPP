@@ -17,13 +17,19 @@ OrgChart::~OrgChart(){ //delete tree to avoid memory leaks
     deleteOrg(this->first);
 }
 //shallow copy
-// OrgChart::OrgChart(OrgChart &ot){
-//     this->first = ot.first;
-//     ot.first = nullptr;
-// }
+OrgChart::OrgChart(OrgChart &ot){
+    this->first = ot.first;
+    ot.first = nullptr;
+}
+
 //deep copy
 OrgChart::OrgChart(const OrgChart &ot){
-this->first = newNode(ot.first->data);
+this->first = new Node(ot.first->data, ot.first->subs);
+}
+
+OrgChart::OrgChart(OrgChart &&ot) noexcept{
+            this->first = ot.first;
+            ot.first = nullptr; 
 }
 //uses level order to find the node with the matching name
 OrgChart::Node* OrgChart::getNode(const string &name) const{

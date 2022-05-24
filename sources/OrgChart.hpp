@@ -15,6 +15,7 @@ namespace ariel{
             string data;
             vector<Node *> subs;
             Node(string s) : data(move(s)){};
+            Node(string s, vector<Node *> v) : data(move(s)), subs(move(v)) {};
             
         };
         static Node *newNode(string data){
@@ -27,6 +28,7 @@ namespace ariel{
         ~OrgChart();
         OrgChart(OrgChart &ot);
         OrgChart(const OrgChart &ot);
+        OrgChart(OrgChart &&ot) noexcept;
         OrgChart& add_root(const string &position);
         OrgChart& add_sub(const string &higherPosName, const string &lowerPosName);
         friend ostream& operator<<(ostream& output, const OrgChart &org);
@@ -64,7 +66,7 @@ namespace ariel{
             Node *n = q.front(); //get the first in order
             q.pop();
             s.push(n); //insert the next one from last
-            for(int i = n->subs.size() - 1; i >= 0; i--){ //iterate over children
+            for(int i = (int)n->subs.size() - 1; i >= 0; i--){ //iterate over children
                 q.push(n->subs.at((unsigned long)i));
             }
         }
@@ -82,7 +84,7 @@ namespace ariel{
         Node* temp = s.top(); //get always the top
         s.pop(); 
         this->tree_list.push_back(temp); //push it to final result
-        for (int i = temp->subs.size() - 1; i >= 0; i--) { //iterate over children
+        for (int i = (int)temp->subs.size() - 1; i >= 0; i--) { //iterate over children
             s.push(temp->subs.at((unsigned long)i));
         }
         }
