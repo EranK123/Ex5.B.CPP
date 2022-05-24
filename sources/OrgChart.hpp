@@ -14,11 +14,11 @@ namespace ariel{
          struct Node{
             string data;
             vector<Node *> subs;
-            Node(string s) : data(s){};
+            Node(string s) : data(move(s)){};
             
         };
-        Node *newNode(string data){
-        Node *temp = new Node(data);
+        static Node *newNode(string data){
+        Node *temp = new Node(move(data));
         return temp;
         }
         
@@ -105,7 +105,7 @@ namespace ariel{
             return this->tree_list[this->curr_index] != it.tree_list[it.curr_index];
     }
         
-     const Iterator operator++(int){
+      Iterator operator++(int){
          Iterator t = *this; //save as temp because we firse return and then add
          this->curr_index++;
           return t;

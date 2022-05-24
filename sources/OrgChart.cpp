@@ -17,10 +17,10 @@ OrgChart::~OrgChart(){ //delete tree to avoid memory leaks
     deleteOrg(this->first);
 }
 //shallow copy
-OrgChart::OrgChart(OrgChart &ot){
-    this->first = ot.first;
-    ot.first = nullptr;
-}
+// OrgChart::OrgChart(OrgChart &ot){
+//     this->first = ot.first;
+//     ot.first = nullptr;
+// }
 //deep copy
 OrgChart::OrgChart(const OrgChart &ot){
 this->first = newNode(ot.first->data);
